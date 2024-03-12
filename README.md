@@ -9,15 +9,20 @@ Olsson , Clara L. Matallana-Tobón , Liz Alden Wily , Michael B. Mascia
 
 Code written by Yifan He. 
 
+ 
 Depdendencies: Code was written in R (4.3.2) 
 Required R packages are tidyverse (2.0.0), readxl (1.4.3), paletteer (1.6.0) and RColorBrewer (1.1.3)
 
+   
 Data: Input data is available at https://dataverse.harvard.edu/...  (doi:10.7910/DVN/HHT0TN)
 
-Summary of scripts: Code should be run in the following order:
+  
+Summary of scripts: 
 1) Tables_Figures.Rmd: code to produce all quantitative tables and figures from pre-processed data. 
 
+ 
 Pre-processing scripts are not included in this repository due to sharing restrictions of some source datasets.
+
 
 Additional scripts available upon request:
 1) area_calculations.R: calculate area by system subfamily/country/biome/land. 
