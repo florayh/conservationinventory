@@ -1,0 +1,885 @@
+---
+title: "Tables and Figures for 'An empirically driven and inclusive inventory facilitates recognition
+of diverse area-based conservation of nature' "
+author: "Yifan (Flora) He"
+date: "3/11/2024"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(flextable)
+library(tidyverse)
+library(janitor)
+library(readxl)
+library(paletteer)
+library(RColorBrewer)
+```
+
+
+#  import data
+Note: all units are in square km
+```{r}
+ctr_sys <- read_csv("data/total_area_by_country_and_subfam.csv")
+land_sys <- read_csv("data/land_area_by_subfam.csv")
+land_ctr <- read_csv("data/land_conserved_by_country.csv")
+biome_sys <-read_csv("data/biome_area_by_subfam.csv")
+biome_ctr <-read_csv("data/biome_area_by_country.csv")
+ctr_sys_land <- read_csv("data/land_area_by_country_and_subfam.csv")
+ctr_sys_biome <- read_csv("data/biome_area_by_country_and_subfam.csv")
+
+totalland <- read_csv("data/total_land_area.csv")
+land_by_ctr <- read_csv("data/land_area_by_country.csv")
+biome_by_ctr <- read_csv("data/biome_by_country.csv")
+non_poly <- read_excel("data/Non_polygon_summary.xlsx") # didn't change this one 
+
+total_conserved <-read_csv("data/total_conserved.csv")
+land_conserved <-read_csv("data/total_conserved_land.csv")
+biome_conserved <-read_csv("data/total_conserved_biome.csv")
+
+overlap_area <- read_csv("data/overlap_matrix.csv")
+
+wdpa2016_matrix <- read_csv("data/wdpa2016_matrix.csv")
+atlas_matrix <- read_csv("data/atlas_matrix.csv")
+
+wdpa_wdoecm_2023_matrix <- read_csv("data/wdpa_wdoecm_2023_matrix.csv")
+
+```
+
+
+
+
+# Main text Figure 5. Comparison of data covered in our inventory and data reported to WDPA in 2016
+
+## WDPA categorization matrix 
+```{r}
+wdpa2016_matrix <- wdpa2016_matrix %>% 
+  mutate_all(as.character)
+
+wdpa2016_matrix <- wdpa2016_matrix %>% 
+  mutate_all(~ case_when(
+    .== "10" ~ "Polygon",
+    .== "11"~ "Polygon and point",
+    .== "1" ~ "Point",
+    .default = as.character(.)))
+
+# add empty columns of subfamilies not reported
+wdpa2016_matrix$"Area under community-based natural resources management" <- NA
+wdpa2016_matrix$"Area under payment for ecosystem services program" <- NA
+wdpa2016_matrix$"Buffer zone" <- NA
+wdpa2016_matrix$"Conservation agreement" <- NA
+wdpa2016_matrix$"Conservation concession" <- NA
+wdpa2016_matrix$"Eco-certified production area" <- NA
+wdpa2016_matrix$"Military training ground" <- NA
+wdpa2016_matrix$"Private recreational area" <- NA
+
+colorder <- c("ISO3",
+              "Area under community-based natural resources management",
+              "Area under payment for ecosystem services program", 
+              "Buffer zone", 
+              "Conservation agreement",
+              "Conservation concession", 
+              "Eco-certified production area", 
+              "Indigenous territory", 
+              "IPLC-led conservation area", 
+              "Military training ground", 
+              "Private recreational area", 
+              "Privately protected area",
+              "State-designated protected area", 
+              "State-designated recreational area",
+              "State-required sustainable forest production area", 
+              "Other",
+              "non-BPA",
+              "International designation",
+              "potential BPA not included in Atlas",
+              "TBD",
+              "Proposed PA")
+
+wdpa2016_matrix <- wdpa2016_matrix %>% 
+  select(all_of(colorder))
+
+wdpa2016_matrix_transpose <- t(wdpa2016_matrix) 
+wdpa2016_matrix_transpose <- wdpa2016_matrix_transpose%>% 
+  as.data.frame(row.names(wdpa2016_matrix_transpose))
+# write.csv(wdpa2016_matrix_transpose, "data/wdpa2016_matrix_cleaned.csv")
+
+t1 <- wdpa2016_matrix %>% 
+  flextable()
+t1 <- theme_vanilla(t2)
+t1
+```
+
+## Our inventory's categorization matrix
+```{r}
+atlas_matrix <- atlas_matrix %>% 
+  mutate_all(as.character)
+
+atlas_matrix <- atlas_matrix %>% 
+  mutate_all(~ case_when(
+    .== "10" ~ "Polygon",
+    .== "11"~ "Polygon and point",
+    .== "10.1" ~ "Polygon and statistics",
+    .== "1" ~ "Point",
+    .=="0.1" ~ "Statistics",
+    .default = as.character(.)))
+
+atlas_matrix$"International designation" <- NA
+atlas_matrix$"potential BPA not included in Atlas" <- NA
+atlas_matrix$"non-BPA" <- NA
+atlas_matrix$"TBD"<- NA
+atlas_matrix$"Proposed PA" <- NA
+
+colorder <- c("ISO_CODE",
+              "Area under community-based natural resources management",
+              "Area under payment for ecosystem services program", 
+              "Buffer zone", 
+              "Conservation agreement",
+              "Conservation concession", 
+              "Eco-certified production area", 
+              "Indigenous territory", 
+              "IPLC-led conservation area", 
+              "Military training ground", 
+              "Private recreational area", 
+              "Privately protected area",
+              "State-designated protected area", 
+              "State-designated recreational area",
+              "State-required sustainable forest production area", 
+              "Other",
+              "non-BPA",
+              "International designation",
+              "potential BPA not included in Atlas",
+              "TBD",
+              "Proposed PA")
+atlas_matrix <- atlas_matrix %>% 
+  select(all_of(colorder)) %>% 
+  arrange(ISO_CODE)
+
+# transpose
+atlas_matrix_transpose <- t(atlas_matrix)
+atlas_matrix_transpose <- atlas_matrix_transpose %>% 
+  as.data.frame(row.names(atlas_matrix_transpose))
+  
+View(atlas_matrix_transpose)
+
+# write.csv(atlas_matrix_transpose, "data/atlas_matrix_cleaned.csv", row.names = T)
+
+t2 <- atlas_matrix %>% 
+  flextable()
+t2 <- theme_vanilla(t3)
+t2
+
+# mannually transpose and combine with WDPA matrix in Excel. used those instead of t1 & t2 in the manuscript. 
+
+```
+
+
+# Figure S1. Percentage of area-based conservation governance system subfamily within the total land area by country.
+
+```{r }
+
+land_by_ctr <- rename(land_by_ctr, land_area =  area_geo, country = ISO_A3)
+
+head(ctr_sys_land)
+names(ctr_sys_land)[2] <- "Country"
+names(ctr_sys_land)[1] <- "System" 
+ctr_sys_land_bar <- ctr_sys_land %>%
+  clean_names() %>%
+  select(country, system, area_geo) %>% 
+  filter(country %in% c("BOL", "BRA", "COL", "ECU", 
+                        "GUF", "GUY", "PER", "SUR", "VEN"))%>%
+  mutate(across(where(is.numeric), round, digits = 2)) %>%  # convert to 2 digits
+  right_join(land_by_ctr, by = "country")
+
+# create new column of categories containing small contributors
+ctr_sys_land_bar$system_sm <- ctr_sys_land_bar$system
+ctr_sys_land_bar$system_sm[ctr_sys_land_bar$system %in% 
+                             c("Private recreational area", 
+                               "Conservation concession", 
+                               "Conservation agreement", 
+                               "Privately protected area", 
+                               "State-designated recreational area")] <-
+  "Small contributors"
+
+
+# calculate percent land
+ctr_sys_land_bar$percent_land <- 
+  ctr_sys_land_bar$area_geo/ctr_sys_land_bar$land_area 
+
+
+# removed non BPA.
+ctr_sys_land_bar <- 
+  ctr_sys_land_bar[!ctr_sys_land_bar$system == "non-BPA",] 
+
+# get percent area by system_sm: 
+bar_fig <- ctr_sys_land_bar %>% group_by(system_sm, country) %>% 
+  summarise(percent_land_sm = sum(percent_land))
+
+percent <- function(x, digits = 2, format = "f", ...) {      # Create user-defined function
+  paste0(formatC(x * 100, format = format, digits = digits, ...), "%")
+}
+bar_fig$percent_land_label <-
+  percent(bar_fig$percent_land_sm)
+
+#reorder sytems
+bar_fig$system_sm <- as.factor(bar_fig$system_sm)
+levels(bar_fig$system_sm)
+bar_fig$system_sm <- factor(bar_fig$system_sm, 
+                                  levels = c("Area under community-based natural resources management",
+                                             "Area under payment for ecosystem services program",
+                                             "Buffer zone",
+                                             "Eco-certified production area",
+                                             "Indigenous territory",
+                                             "IPLC-led conservation area",
+                                             "Military training ground",
+                                             "State-designated protected area",
+                                             "State-required sustainable forest production area",
+                                             "Small contributors",
+                                             "Other"))
+levels(bar_fig$system_sm) # check output
+
+# Assign colors
+amazoncol_sm <- c("#8c6bb1", # "Area under community-based natural resources management"
+               "#74a9cf", #"Area under payment for ecosystem services program"
+               "#AEE171", #"Buffer zone"
+               "#CD6E6E", # "Eco-certified production area"
+               "#6677CD", # "Indigenous territory"
+               "#6A3D9A", #"IPLC-led conservation area",
+               "#CC6428", #"Military training ground"
+               "#feb24c",#"small contributor"
+               "#006837", #"State-designated protected area"
+               "#fcc5c0", # "State-required sustainable forest production area"
+               "#CCCCCC" #"Other"
+)
+# Amazon boundary: #686868
+# boundary color: #828282 (50% gray)
+# country background: white 
+
+names(amazoncol_sm) <- c(
+  "Area under community-based natural resources management", 
+  "Area under payment for ecosystem services program",
+  "Buffer zone",
+  "Eco-certified production area",
+  "Indigenous territory",
+  "IPLC-led conservation area",
+  "Military training ground",
+  "Small contributors",
+  "State-designated protected area",
+  "State-required sustainable forest production area",
+  "Other") 
+
+
+# Turn ISO into country name
+
+bar_fig$country <- factor(bar_fig$country, 
+                          levels = c("BOL", "BRA", "COL", "ECU", 
+                                     "GUF", "GUY", "PER", "SUR", "VEN"),
+                          labels = c("Bolivia", "Brazil", "Colombia", 
+                                     "Ecuador", "French Guiana", "Guyana", "Peru",
+                                     "Suriname", "Venezuela"))
+
+ggplot(bar_fig, aes(x = system_sm, y = percent_land_sm, fill = system_sm))+
+  geom_bar(stat = "identity")+
+  scale_fill_manual(values = amazoncol_sm)+
+  facet_wrap(~country, nrow = 3, ncol = 3)+
+  geom_text(aes(label = percent_land_label), 
+            position = position_dodge(0.9),
+            vjust = - 0.5,
+            size = 2.5)+
+  ylab("Percent of country's total land area")+
+  guides(fill=guide_legend(title="System subfamily"))+ # change legend title 
+  scale_y_continuous(labels = scales::percent)+
+  theme(axis.title.x=element_blank(), # remove x labels - too long 
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+
+ 
+
+```
+
+# Figure S2. Percentage of area-based conservation governance system subfamilies within the Amazon biome area by country. 
+
+```{r eval}
+biome_by_ctr <- rename(biome_by_ctr, country = ISO_A3, biome_area =  area_geo)
+
+head(ctr_sys_biome)
+names(ctr_sys_biome)[2] <- "Country"
+names(ctr_sys_biome)[1] <- "System" 
+ctr_sys_biome_bar <- ctr_sys_biome %>%
+  clean_names() %>%
+  select(country, system, area_geo) %>% 
+  filter(country %in% c("BOL", "BRA", "COL", "ECU", "GUF", "GUY", "PER", "SUR", "VEN"))%>%
+  mutate(across(where(is.numeric), round, digits = 2)) %>% 
+  right_join(biome_by_ctr, by = "country")
+
+# create new column of categories containing small contributors
+ctr_sys_biome_bar$system_sm <- ctr_sys_biome_bar$system
+ctr_sys_biome_bar$system_sm[ctr_sys_biome_bar$system %in% 
+                             c("Private recreational area",  
+                               "Conservation concession", 
+                               "Conservation agreement", 
+                               "Privately protected area", 
+                               "State-designated recreational area")] <-
+  "Small contributors"
+
+# calculate percent biome
+ctr_sys_biome_bar$percent_biome <- ctr_sys_biome_bar$area_geo/ctr_sys_biome_bar$biome_area 
+
+
+# removed non-BPA 
+ctr_sys_biome_bar <- ctr_sys_biome_bar[!ctr_sys_biome_bar$system == "non-BPA",] 
+
+# get percent area by system_sm: 
+bar_fig_biome <- ctr_sys_biome_bar %>% group_by(system_sm, country) %>% 
+  summarise(percent_biome_sm = sum(percent_biome))
+
+percent <- function(x, digits = 2, format = "f", ...) {      # Create user-defined function
+  paste0(formatC(x * 100, format = format, digits = digits, ...), "%")
+}
+bar_fig_biome$percent_biome_label <-percent(bar_fig_biome$percent_biome_sm)
+
+#reorder sytems
+bar_fig_biome$system_sm <- as.factor(bar_fig_biome$system_sm)
+levels(bar_fig_biome$system_sm)
+bar_fig_biome$system_sm <- factor(bar_fig_biome$system_sm, 
+                                  levels = c("Area under community-based natural resources management",
+                                             "Area under payment for ecosystem services program",
+                                             "Buffer zone",
+                                             "Eco-certified production area",
+                                             "Indigenous territory",
+                                             "IPLC-led conservation area",
+                                             "Military training ground",
+                                             "State-designated protected area",
+                                             "State-required sustainable forest production area",
+                                             "Small contributors",
+                                             "Other"))
+levels(bar_fig_biome$system_sm) # check output
+
+# Turn ISO into country name
+
+bar_fig_biome$country <- factor(bar_fig_biome$country, 
+                          levels = c("BOL", "BRA", "COL", "ECU", 
+                                     "GUF", "GUY", "PER", "SUR", "VEN"),
+                          labels = c("Bolivia", "Brazil", "Colombia", 
+                                     "Ecuador", "French Guiana", "Guyana", "Peru",
+                                     "Suriname", "Venezuela"))
+
+# colors 
+amazoncol_sm <- c("#8c6bb1", # "Area under community-based natural resources management"
+               "#74a9cf", #"Area under payment for ecosystem services program"
+               "#AEE171", #"Buffer zone"
+               "#CD6E6E", # "Eco-certified production area"
+               "#6677CD", # "Indigenous territory"
+               "#6A3D9A", #"IPLC-led conservation area",
+               "#CC6428", #"Military training ground"
+               "#feb24c",#"small contributor"
+               "#006837", #"State-designated protected area"
+               "#fcc5c0", # "State-required sustainable forest production area"
+               "#CCCCCC" #"Other"
+)
+# Amazon boundary: #686868
+# boundary color: #828282 (50% gray)
+# country background: white 
+
+names(amazoncol_sm) <- c(
+  "Area under community-based natural resources management", 
+  "Area under payment for ecosystem services program",
+  "Buffer zone",
+  "Eco-certified production area",
+  "Indigenous territory",
+  "IPLC-led conservation area",
+  "Military training ground",
+  "Small contributors",
+  "State-designated protected area",
+  "State-required sustainable forest production area",
+  "Other") 
+
+ggplot(bar_fig_biome, aes(x = system_sm, y = percent_biome_sm, fill = system_sm))+
+  geom_bar(stat = "identity")+
+  scale_fill_manual(values = amazoncol_sm)+
+  facet_wrap(~country, nrow = 3, ncol = 3)+
+  geom_text(aes(label = percent_biome_label), 
+            position = position_dodge(0.9),
+            vjust = - 0.5,
+            size = 2.5)+
+  ylab("Percent of country's total Amazon biome area")+
+  guides(fill=guide_legend(title="System subfamily"))+ # change legend title 
+  scale_y_continuous(labels = scales::percent)+
+  theme(axis.title.x=element_blank(), # remove x labels - too long 
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+
+
+
+```
+
+#Figure S3.  Total area, in km2, and percentage of country land area under area-based conservation governance system by country, excluding data represented as points and statistics.
+
+```{r}
+
+
+land_ctr <- rename(land_ctr, "country" = "ISO_CODE")
+land_ctr <- land_ctr %>% 
+  select(country, area_geo)
+
+names(land_by_ctr)[2] <- "country"
+
+ctr_land_bar <- land_ctr %>%
+  mutate(across(where(is.numeric), round, digits = 2)) %>% 
+  right_join(land_by_ctr, by = "country") 
+
+# calculate percent land
+ctr_land_bar$percent_land <- ctr_land_bar$area_geo/ctr_land_bar$land_area 
+
+ctr_land_bar$percent_land_label <-paste("(", percent(ctr_land_bar$percent_land), ")", sep = "")
+
+# add label for area conserved 
+ctr_land_bar$area_label <-round(ctr_land_bar$area_geo, digits = 2) 
+
+#update country name
+ctr_land_bar$country <- factor(ctr_land_bar$country, 
+                          levels = c("BOL", "BRA", "COL", "ECU", 
+                                     "GUF", "GUY", "PER", "SUR", "VEN"),
+                          labels = c("Bolivia", "Brazil", "Colombia", 
+                                     "Ecuador", "French Guiana", "Guyana", "Peru",
+                                     "Suriname", "Venezuela"))
+
+ggplot(ctr_land_bar, aes(x = country, y = percent_land))+
+  geom_bar(stat = "identity", fill = "steelblue")+
+  geom_text(aes(label = percent_land_label), 
+            position = position_dodge(0.9),
+            vjust = - 0.5,
+            size = 2.5)+
+  geom_text(aes(label = area_label), 
+            position = position_dodge(0.9),
+            vjust = - 2.5,
+            size = 2.5)+
+  annotate("text", x = 8, y = 0.85, label = 
+  "Total land under area-based 
+   conservation governance system: 
+   5,566,753 km2 (40.96%) ", size = 3)+
+  ylab("Percent of country's total land area")+
+  scale_y_continuous(labels = scales::percent)
+
+
+# sum(land_ctr$area_geo) / totallandv
+# percent land conserved: 5566753/13591776
+```
+
+#Figure S4. Total area, in km2, and percentage of Amazon biome under area-based conservation governance systems by country.
+
+```{r}
+
+biome_by_ctr  # a country's amazon biome area
+
+biome_ctr <- rename(biome_ctr, "country" = "ISO_CODE") # a country's amazon biome under conservation system
+
+ctr_biome_bar <- biome_ctr %>%
+  mutate(across(where(is.numeric), round, digits = 2)) %>% 
+  right_join(biome_by_ctr, by = "country")
+
+# calculate percent biome
+ctr_biome_bar$percent_biome <- ctr_biome_bar$area_geo/ctr_biome_bar$biome_area 
+ctr_biome_bar$percent_biome_label <-paste("(", percent(ctr_biome_bar$percent_biome), ")", sep = "")
+
+# add label for area conserved 
+ctr_biome_bar$area_label <-round(ctr_biome_bar$area_geo, digits = 2) 
+
+#update country name
+ctr_biome_bar$country <- factor(ctr_biome_bar$country, 
+                          levels = c("BOL", "BRA", "COL", "ECU", 
+                                     "GUF", "GUY", "PER", "SUR", "VEN"),
+                          labels = c("Bolivia", "Brazil", "Colombia", 
+                                     "Ecuador", "French Guiana", "Guyana", "Peru",
+                                     "Suriname", "Venezuela"))
+
+ggplot(ctr_biome_bar, aes(x = country, y = percent_biome))+
+  geom_bar(stat = "identity", fill = "steelblue")+
+  geom_text(aes(label = percent_biome_label), 
+            position = position_dodge(0.9),
+            vjust = - 0.5,
+            size = 2.5)+
+  geom_text(aes(label = area_label), 
+            position = position_dodge(0.9),
+            vjust = - 2.5,
+            size = 2.5)+
+  annotate("text", x = 8, y = 0.85, label = 
+  "Total Amazon biome under 
+   area-based conservation 
+   governance system: 
+   4,340,711.69 km2 (62.44%)", size = 3)+
+  ylab("Percent of country's total Amazon biome area")+
+  scale_y_continuous(labels = scales::percent)
+
+# percent biome conserved = 4340711.693/6951904.10 (using biome area after removing no country areas )
+```
+
+
+# Figure S5. Percent of country’s total land area that belongs to each subfamily, by country. 
+
+```{r }
+
+# vertical
+ggplot(bar_fig, aes(system_sm, percent_land_sm, fill = country))+
+  geom_bar(position = "dodge",
+           stat = "identity")+
+  scale_fill_brewer(palette = "Set3")+
+  coord_flip()+
+  ylab("Percent of country's total land area")+ 
+  scale_y_continuous(labels = scales::percent)+
+  aes(stringr::str_wrap(system_sm, 15))+
+  xlab(NULL)+
+  geom_text(aes(label = percent_land_label), 
+            position = position_dodge(0.9),
+            hjust = - 0.3,
+            size = 2.5)
+
+```
+
+
+# Table S3. Total area in km2 of both terrestrial and marine area-based conservation governance system by country, excluding data represented as points and statistics. 
+
+```{r}
+#ctr_sys
+names(ctr_sys)[2] <- "Country"
+names(ctr_sys)[1] <- "System" 
+ctr_sys_tbl <- ctr_sys %>%
+  clean_names() %>%
+  select(country, system, area_geo) %>% 
+  filter(country %in% c('BOL', 'BRA', 'COL', 'ECU', 'GUF', 'GUY', 'PER', 'SUR', 'VEN'))%>% 
+  mutate(across(where(is.numeric), round, digits = 2)) %>% 
+  pivot_wider(names_from = country, values_from = area_geo) %>% 
+  select(system, BOL, BRA, COL, ECU, GUF, GUY, PER, SUR, VEN) # reorder columns
+
+# add row sum
+ctr_sys_tbl <- ctr_sys_tbl %>% 
+  mutate(sum = rowSums(.[,2:10], na.rm = T))
+
+#create 2 list used repeatedly in later commands
+levelist <- c("Area under community-based natural resources management",
+              "Area under payment for ecosystem services program", 
+              "Buffer zone", 
+              "Conservation agreement",
+              "Conservation concession", 
+              "Eco-certified production area", 
+              "Indigenous territory", 
+              "IPLC-led conservation area", 
+              "Military training ground", 
+              "Private recreational area", 
+              "Privately protected area",
+              "State-designated protected area", 
+              "State-designated recreational area",
+              "State-required sustainable forest production area", 
+              "Other")
+colnamelist <- c("System subfamily", "Bolivia", "Brazil", "Colombia", 
+                        "Ecuador", "French Guiana", "Guyana", "Peru",
+                        "Suriname", "Venezuela", "Total")
+
+# reorder rows
+ctr_sys_tbl$system <- as.factor(ctr_sys_tbl$system)
+levels(ctr_sys_tbl$system)
+ctr_sys_tbl$system <- factor(ctr_sys_tbl$system,
+                             levels = levelist)
+levels(ctr_sys_tbl$system) # check output
+
+ctr_sys_tbl<- with(ctr_sys_tbl, ctr_sys_tbl[order(system),])
+
+# rename columns 
+names(ctr_sys_tbl) <- colnamelist
+
+t1 <- ctr_sys_tbl %>% 
+  flextable()
+t1 <- theme_vanilla(t1)
+t1 <- add_footer_lines(t1, "Spatial overlap exists between systems.")
+t1 <- color(t1, part = "footer", color = "#666666")
+t1
+
+```
+
+
+# Table S4. Total area in km2 of terrestrial area-based conservation governance system by country, excluding data represented as points and statistics.
+
+```{r }
+
+# total system area and its percentage of land (for the table, added manually)
+land_sys <- rename(land_sys, system = SYS_CAT_NEW, sys_area = area_geo)
+totallandv <- as.numeric(totalland[1,2])
+land_sys$percent_land <- land_sys$sys_area/totallandv
+land_sys$sys_area <- round(land_sys$sys_area, digits = 2)
+percent <- function(x, digits = 2, format = "f", ...) {      # Create user-defined function
+  paste0(formatC(x * 100, format = format, digits = digits, ...), "%")
+}
+land_sys$percent_land_label <-
+  percent(land_sys$percent_land)
+land_sys$output_total <- paste(
+  land_sys$sys_area, 
+  "(", 
+  land_sys$percent_land_label, 
+  ")")
+land_sys
+
+# calculate percent land
+
+percent <- function(x, digits = 2, format = "f", ...) {      # Create user-defined function
+  paste0(formatC(x * 100, format = format, digits = digits, ...), "%")
+}
+ctr_sys_land_bar$percent_land_label <-
+  percent(ctr_sys_land_bar$percent_land)
+
+# removed non-BPA
+ctr_sys_land_bar <- 
+  ctr_sys_land_bar[!ctr_sys_land_bar$system == "non-BPA",]
+
+# new column that includes area and %
+ctr_sys_land_bar$results <- paste(
+  ctr_sys_land_bar$area_geo, 
+  "(", 
+  ctr_sys_land_bar$percent_land_label, 
+  ")")
+
+ctr_sys_tbl <- ctr_sys_land_bar %>% 
+  select(country, system, results) %>% 
+  pivot_wider(names_from = country, values_from = results) %>% 
+  select(system, BOL, BRA, COL, ECU, GUF, GUY, PER, SUR, VEN)
+
+# reorder rows
+ctr_sys_tbl$system <- as.factor(ctr_sys_tbl$system)
+levels(ctr_sys_tbl$system)
+ctr_sys_tbl$system <- factor(ctr_sys_tbl$system, 
+                                  levels = levelist)
+levels(ctr_sys_tbl$system) # check output
+
+ctr_sys_tbl<- with(ctr_sys_tbl, ctr_sys_tbl[order(system),])
+
+# add total system area
+land_sys <-land_sys %>% 
+  select(system, output_total)
+ctr_sys_tbl <- left_join(ctr_sys_tbl, land_sys, by = "system" )
+
+# rename columns 
+
+names(ctr_sys_tbl) <- colnamelist
+
+
+
+t2 <- ctr_sys_tbl %>% 
+  flextable()
+t2 <- theme_vanilla(t2)
+t2 <- add_footer_lines(t2, "Spatial overlap exists between systems.")
+t2 <- color(t2, part = "footer", color = "#666666")
+t2
+
+
+```
+
+# Table S4 addition: land area
+manually add to table S4
+```{r }
+land_by_ctr$country <- c("BOL", "BRA", "COL", "ECU", "GUF", "GUY", "PER", "SUR", "VEN")
+land_by_ctr2 <-land_by_ctr %>% 
+  select(country, land_area) %>% 
+  pivot_wider(names_from = country, values_from = land_area)
+t <- land_by_ctr2 %>% 
+  flextable()
+t <- theme_vanilla(t)
+t
+```
+
+
+# Table S5. Total area in km2 of area-based conservation governance systems within the Amazon biome by country, excluding data represented as points and statistics. 
+
+```{r}
+
+# total system area and its percentage of biome
+biome_sys <- rename(biome_sys, "system" = "SYS_CAT_NEW", "sys_area" = "area_geo")
+total_biome_area <- sum(biome_by_ctr$biome_area) # use sum of country biome area instead of direclty from biome shp, because biome shp countains water/ocean in the amazon that is not counted in country area
+
+biome_sys$sys_area <- round(biome_sys$sys_area, digits = 2)
+
+biome_sys$percent_biome <- biome_sys$sys_area/total_biome_area 
+percent <- function(x, digits = 2, format = "f", ...) {      # Create user-defined function
+  paste0(formatC(x * 100, format = format, digits = digits, ...), "%")
+}
+biome_sys$percent_biome_label <-
+  percent(biome_sys$percent_biome)
+biome_sys$total_output <- paste(
+  biome_sys$sys_area, 
+  "(", 
+  biome_sys$percent_biome_label, 
+  ")")
+
+
+# calculate percent biome
+
+ctr_sys_biome_bar$percent_biome_label <-percent(ctr_sys_biome_bar$percent_biome)
+
+# removed non-BPA.  
+ctr_sys_biome_bar <- ctr_sys_biome_bar[!ctr_sys_biome_bar$system == "non-BPA",] 
+
+
+# new column that includes area and %
+ctr_sys_biome_bar$results <- paste(
+  ctr_sys_biome_bar$area_geo, 
+  "(", 
+  ctr_sys_biome_bar$percent_biome_label, 
+  ")")
+
+# reorder columns
+ctr_sys_biome_table <- ctr_sys_biome_bar %>%
+  select(country, system, results) %>% 
+  pivot_wider(names_from = country, values_from = results) %>% 
+  select(system, BOL, BRA, COL, ECU, GUF, GUY, PER, SUR, VEN)
+
+# reorder rows
+ctr_sys_biome_table$system <- as.factor(ctr_sys_biome_table$system)
+levels(ctr_sys_biome_table$system)
+ctr_sys_biome_table$system <- factor(ctr_sys_biome_table$system, 
+                                  levels = levelist)
+levels(ctr_sys_biome_table$system) # check output
+
+ctr_sys_biome_table<- with(ctr_sys_biome_table, ctr_sys_biome_table[order(system),])
+
+# join total percent biome
+biome_sys <- biome_sys %>% 
+  select(system, total_output)
+
+ctr_sys_biome_table <- left_join(ctr_sys_biome_table, biome_sys, by = "system")
+# rename columns 
+names(ctr_sys_biome_table) <- colnamelist
+
+t <- ctr_sys_biome_table %>% 
+  flextable()
+t <- theme_vanilla(t)
+t <- add_footer_lines(t, "Spatial overlap exists between systems.")
+t <- color(t, part = "footer", color = "#666666")
+t
+
+```
+
+## Table S5 addition: biome area
+ manually add to table  S5
+```{r}
+biome_by_ctr$country <- c("BOL", "BRA", "COL", "ECU", "GUF", "GUY", "PER", "SUR", "VEN")
+biome_by_ctr2 <-biome_by_ctr %>% 
+  select(country, biome_area) %>% 
+  pivot_wider(names_from = country, values_from = biome_area)
+t <- biome_by_ctr2 %>% 
+  flextable()
+t <- theme_vanilla(t)
+t
+```
+
+
+
+# Table S6. Area of spatial overlap between subfamilies, in km2, excluding data represented as points and statistics. 
+
+```{r}
+
+# keep 2 digits
+overlap_area <- overlap_area %>% 
+    mutate(across(where(is.numeric), round, digits = 2))  # convert to 2 digits
+t1 <- overlap_area %>% 
+  flextable()
+t1 <- theme_vanilla(t1)
+t1
+```
+
+#Table S8. Statistics and qualitative data that are not captured in Main Figure 1, Suppl. Figure 1-4, or Suppl. Table 1-5, as spatial data were not available. 
+```{r}
+
+t <- non_poly %>% 
+  flextable()
+t <- theme_vanilla(t)
+t <- add_footer_lines(t, "Spatial overlap may exist between systems.")
+t <- color(t, part = "footer", color = "#666666")
+t
+```
+
+# Table S9.  Comparison of data covered in our inventory in 2016 and data reported to WDPA and WD-OECM in September 2023.
+
+```{r}
+wdpa_wdoecm_2023_matrix<- wdpa_wdoecm_2023_matrix %>% 
+  mutate_all(as.character)
+
+wdpa_wdoecm_2023_matrix <- wdpa_wdoecm_2023_matrix %>% 
+  mutate_all(~ case_when(
+    .== "10" ~ "Polygon",
+    .== "11"~ "Polygon and point",
+    .== "1" ~ "Point",
+    .default = as.character(.)))
+
+
+colorder <- c("ISO3",
+              "Buffer zone", 
+              "Conservation concession", 
+              "Indigenous territory", 
+              "IPLC-led conservation area", 
+              "Privately protected area",
+              "State-designated protected area", 
+              "State-designated recreational area",
+              "State-required sustainable forest production area", 
+              "International designation",
+              "Other",
+              "non-BPA",
+              "potential BPA not included in Atlas",
+              "Proposed PA")
+wdpa_wdoecm_2023_matrix <- wdpa_wdoecm_2023_matrix %>% 
+  select(all_of(colorder)) %>% 
+  arrange(ISO3)
+
+# transpose
+wdpa_wdoecm_2023_matrix_transpose <- t(wdpa_wdoecm_2023_matrix)
+wdpa_wdoecm_2023_matrix_transpose <- wdpa_wdoecm_2023_matrix_transpose %>% 
+  as.data.frame(row.names(wdpa_wdoecm_2023_matrix_transpose))
+  
+t3 <- wdpa_wdoecm_2023_matrix %>% 
+  flextable()
+t3 <- theme_vanilla(t3)
+t3
+#write.csv(wdpa_wdoecm_2023_matrix_transpose, "data/wdpa_wdoecm_2023_matrix_cleaned.csv", row.names = T)
+
+# mannually transpose and combine with WDPA matrix in Excel. used those instead of t3 in the manuscript. 
+
+```
+
+
+
+
+## calculate small contributor percentage
+
+```{r}
+biomeArea <- sum(biome_by_ctr$area_geo)  #excluding area that did not overlap with country polygons
+landArea <- as.numeric(totalland[1,2])
+totalConserved <- as.numeric(total_conserved[1,2])  
+
+sys_biome_smallcontri <- ctr_sys_biome %>% group_by(System) %>% 
+  summarise(sys_area = sum(area_geo))
+sys_biome_smallcontri$percentBiome <- round(sys_biome_smallcontri$sys_area/biomeArea, digits = 3)
+View(sys_biome_smallcontri)
+
+
+sys_land_smallcontri <- ctr_sys_land %>% 
+  group_by(System) %>% 
+  summarise(sys_area = sum(area_geo))
+sys_land_smallcontri$percentLand <- round(sys_land_smallcontri$sys_area/landArea, digits = 3)
+View(sys_land_smallcontri)
+
+sys_totalarea_smallcontri <- ctr_sys %>% 
+  group_by(System) %>% 
+  summarise(sys_area = sum(area_geo))
+sys_totalarea_smallcontri <- sys_totalarea_smallcontri %>% 
+  filter(System%in% c("Private recreational area", 
+                            "Conservation concession", 
+                            "Conservation agreement", 
+                            "Privately protected area", 
+                            "State-designated recreational area"))
+sys_totalarea_smallcontri_percent <- sum(sys_totalarea_smallcontri$sys_area)/totalConserved
+sys_totalarea_smallcontri_percent
+
+
+```
+Collectively contribute to <1% of total area conserved: 
+Private recreational area; Conservation concession; Conservation agreement; Privately protected area; State-designated recreational area 
+
