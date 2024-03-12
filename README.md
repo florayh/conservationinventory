@@ -1,5 +1,4 @@
-# conservationinventory
-Replication code for "An empirically driven and inclusive inventory facilitates recognition of diverse area-based conservation of nature"
+# Replication code for "An empirically driven and inclusive inventory facilitates recognition of diverse area-based conservation of nature"
 
 Authors: Siyu Qin, Yifan He , Rachel E. Golden Kroner , Sushma Shrestha ,
 Bruno Henriques Coutinho, Marion Karmann  , Juan Carlos Ledezma , Christian
