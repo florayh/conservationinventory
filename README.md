@@ -1,5 +1,4 @@
-# conservationinventory
-Replication code for "An empirically driven and inclusive inventory facilitates recognition of diverse area-based conservation of nature"
+# Replication code for "An empirically driven and inclusive inventory facilitates recognition of diverse area-based conservation of nature"
 
 Authors: Siyu Qin, Yifan He , Rachel E. Golden Kroner , Sushma Shrestha ,
 Bruno Henriques Coutinho, Marion Karmann  , Juan Carlos Ledezma , Christian
@@ -12,9 +11,6 @@ Code written by Yifan He.
  
 Depdendencies: Code was written in R (4.3.2) 
 Required R packages are tidyverse (2.0.0), readxl (1.4.3), paletteer (1.6.0) and RColorBrewer (1.1.3)
-
-   
-Data: Input data is available at https://dataverse.harvard.edu/...  (doi:10.7910/DVN/HHT0TN)
 
   
 Summary of scripts: 
