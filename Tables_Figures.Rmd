@@ -108,7 +108,7 @@ wdpa2016_matrix_transpose <- wdpa2016_matrix_transpose%>%
 
 t1 <- wdpa2016_matrix %>% 
   flextable()
-t1 <- theme_vanilla(t2)
+t1 <- theme_vanilla(t1)
 t1
 ```
 
@@ -162,16 +162,15 @@ atlas_matrix_transpose <- t(atlas_matrix)
 atlas_matrix_transpose <- atlas_matrix_transpose %>% 
   as.data.frame(row.names(atlas_matrix_transpose))
   
-View(atlas_matrix_transpose)
 
 # write.csv(atlas_matrix_transpose, "data/atlas_matrix_cleaned.csv", row.names = T)
 
 t2 <- atlas_matrix %>% 
   flextable()
-t2 <- theme_vanilla(t3)
+t2 <- theme_vanilla(t2)
 t2
 
-# mannually transpose and combine with WDPA matrix in Excel. used those instead of t1 & t2 in the manuscript. 
+# manually transpose and combine with WDPA matrix in Excel. used those instead of t1 & t2 in the manuscript. 
 
 ```
 
@@ -850,7 +849,7 @@ t3
 ## calculate small contributor percentage
 
 ```{r}
-biomeArea <- sum(biome_by_ctr$area_geo)  #excluding area that did not overlap with country polygons
+biomeArea <- sum(biome_by_ctr$biome_area)  #excluding area that did not overlap with country polygons
 landArea <- as.numeric(totalland[1,2])
 totalConserved <- as.numeric(total_conserved[1,2])  
 
