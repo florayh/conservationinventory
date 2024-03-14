@@ -9,7 +9,7 @@ Olsson , Clara L. Matallana-Tobón , Liz Alden Wily , Michael B. Mascia
 Code written by Yifan He. 
 
  
-Depdendencies: Code was written in R (4.3.2) 
+Depdendencies: Code was written in R (4.3.2). 
 Required R packages are tidyverse (2.0.0), readxl (1.4.3), paletteer (1.6.0) and RColorBrewer (1.1.3)
 
   
