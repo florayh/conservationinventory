@@ -23,3 +23,6 @@ Pre-processing scripts are not included in this repository due to sharing restri
 Additional scripts available upon request:
 1) area_calculations.R: calculate area by system subfamily/country/biome/land. 
 2) compare_WDPA.R: compare category coverage of our 2016 Amazon dataset with the 2016 version of WDPA, and the 2023 version of WDPA + WD-OECM 
+
+Sharable raw data associated with this publication can be accessed via Havard Dataverse:
+He, Yifan, 2024, "Replication data for "An inclusive, empirically grounded inventory facilitates recognition of diverse area-based conservation of nature"", https://doi.org/10.7910/DVN/HHT0TN, Harvard Dataverse.
