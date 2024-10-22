@@ -1,6 +1,6 @@
 # Replication code for "An inclusive, empirically grounded inventory facilitates recognition of diverse area-based conservation of nature"
 
-Qin, S.*, He, Y.*, Golden Kroner, R. E., Shrestha, S., Coutinho, B. H., Karmann, M., Ledezma, J.C., Martinez, C., Morón-Zambrano, V., Ulloa, R., Yerena, E., Bernard, C.,  Bull, J.W., Mendoza, E., de Pracontal, N., Reytar, K., Veit, P.,  Matallana‐Tobón, C.L., Wiley, L.A., Mascia, M. (2024). Recognize diverse governance systems for area-based conservation of nature. One Earth. (*denotes co-first author and co-corresponding authors)
+Qin, S./*, He, Y./*, Golden Kroner, R. E., Shrestha, S., Coutinho, B. H., Karmann, M., Ledezma, J.C., Martinez, C., Morón-Zambrano, V., Ulloa, R., Yerena, E., Bernard, C.,  Bull, J.W., Mendoza, E., de Pracontal, N., Reytar, K., Veit, P.,  Matallana‐Tobón, C.L., Wiley, L.A., Mascia, M. (2024). Recognize diverse governance systems for area-based conservation of nature. One Earth. (*denotes co-first author and co-corresponding authors)
 Full text: https://www.cell.com/one-earth/fulltext/S2590-3322(24)00134-9 
 
 Code written by Yifan He. 
