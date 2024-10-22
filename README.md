@@ -1,15 +1,12 @@
 # Replication code for "An inclusive, empirically grounded inventory facilitates recognition of diverse area-based conservation of nature"
 
-Authors: Siyu Qin, Yifan He , Rachel E. Golden Kroner , Sushma Shrestha ,
-Bruno Henriques Coutinho, Marion Karmann  , Juan Carlos Ledezma , Christian
-Martinez, Vilisa Morón-Zambrano , Roberto Ulloa , Edgard Yerena , Curtis Bernard ,
-Joseph W. Bull , Eddy Mendoza , Nyls de Pracontal, Katie Reytar , Peter Veit , Erik
-Olsson , Clara L. Matallana-Tobón , Liz Alden Wily , Michael B. Mascia
+Qin, S.*, He, Y.*, Golden Kroner, R. E., Shrestha, S., Coutinho, B. H., Karmann, M., Ledezma, J.C., Martinez, C., Morón-Zambrano, V., Ulloa, R., Yerena, E., Bernard, C.,  Bull, J.W., Mendoza, E., de Pracontal, N., Reytar, K., Veit, P.,  Matallana‐Tobón, C.L., Wiley, L.A., Mascia, M. (2024). Recognize diverse governance systems for area-based conservation of nature. One Earth. (*denotes co-first author and co-corresponding authors)
+Full text: https://www.cell.com/one-earth/fulltext/S2590-3322(24)00134-9 
 
 Code written by Yifan He. 
 
  
-Depdendencies: Code was written in R (4.3.2). 
+Dependencies: Code was written in R (4.3.2). 
 Required R packages are tidyverse (2.0.0), readxl (1.4.3), paletteer (1.6.0) and RColorBrewer (1.1.3)
 
   
